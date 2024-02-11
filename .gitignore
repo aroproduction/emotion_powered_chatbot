@@ -4,3 +4,7 @@ data
 emotions.py
 detect.py
 detect2.py
+venv
+gender_deploy.prototxt
+gender_net.prototxt
+gender.py

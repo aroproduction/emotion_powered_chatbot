@@ -1,11 +1,10 @@
 import numpy as np
 import cv2
 import streamlit as st
-from tensorflow import keras
-from keras.models import model_from_json
-from keras.preprocessing.image import img_to_array
+# from tensorflow import keras
+# from keras.models import model_from_json
+# from keras.preprocessing.image import img_to_array
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import matplotlib.pyplot as plt
 import cv2
 from tensorflow.keras.models import Sequential 
 from tensorflow.keras.layers import Dense, Dropout, Flatten 
