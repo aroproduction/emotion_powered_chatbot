@@ -1,19 +1,15 @@
 import numpy as np
 import cv2
 import streamlit as st
-# from tensorflow import keras
-# from keras.models import model_from_json
-# from keras.preprocessing.image import img_to_array
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import cv2
 from tensorflow.keras.models import Sequential 
 from tensorflow.keras.layers import Dense, Dropout, Flatten 
 from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import requests
 from localStoragePy import localStoragePy
+from deepface import DeepFace
 
 localStorage = localStoragePy('my_app', 'json')
 
@@ -51,10 +47,6 @@ class VideoTransformer(VideoTransformerBase):
 
         MODEL_MEAN_VALUES=(78.4263377603, 87.7689143744, 114.895847746)
 
-        # Load the gender detection model
-        gender_net = cv2.dnn.readNetFromCaffe('gender_deploy.prototxt', 'gender_net.caffemodel')
-        gender_list = ['Male', 'Female']
-
         # Load the age detection model
         age_net = cv2.dnn.readNetFromCaffe('age_deploy.prototxt', 'age_net.caffemodel')
         age_list = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)', '(60-100)']
@@ -63,10 +55,6 @@ class VideoTransformer(VideoTransformerBase):
 
         # prevents openCL usage and unnecessary logging messages
         cv2.ocl.setUseOpenCL(False)
-
-        # dictionary which assigns each label an emotion (alphabetical order)
-        # global emotion_dict
-        # emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
         # Find haar cascade to draw bounding box around face
         frame = frame.to_ndarray(format="bgr24")
@@ -85,14 +73,10 @@ class VideoTransformer(VideoTransformerBase):
             prediction = VideoTransformer.model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
 
-            # Preprocess the ROI for gender detection
-            roi = cv2.resize(frame[y:y+h,x:x+w], (227, 227))
-            blob = cv2.dnn.blobFromImage(roi, 1, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
-
-            # Predict gender
-            gender_net.setInput(blob)
-            gender_preds = gender_net.forward()
-            gender = gender_list[gender_preds[0].argmax()]
+            # Gender detection
+            face = frame[y:y + h, x:x + w] # cropping the face found
+            result = DeepFace.analyze(face, actions = ['gender'], enforce_detection=False)
+            gender = "Male" if result[0]['dominant_gender'] else "Female"
 
             # Preprocess the ROI for age detection
             roi = cv2.resize(frame[y:y+h,x:x+w], (227, 227))
@@ -108,15 +92,6 @@ class VideoTransformer(VideoTransformerBase):
             # global max_indexes 
 
             localStorage.setItem('key', maxindex)
-            # max_indexes.append(maxindex)
-            # print(max_indexes)
-
-
-            # cv2.imshow('Video', cv2.resize(frame,(700, 500),interpolation = cv2.INTER_CUBIC))
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-
-            # cv2.destroyAllWindows()
 
         return frame
 

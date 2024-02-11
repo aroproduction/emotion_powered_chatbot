@@ -6,5 +6,5 @@ detect.py
 detect2.py
 venv
 gender_deploy.prototxt
-gender_net.prototxt
+gender_net.caffemodel
 gender.py
