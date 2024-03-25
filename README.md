@@ -11,27 +11,26 @@ This emotion-powered chatbot uses Streamlit for deployment and OpenCV for an emo
 
 ## Run Locally
 
-To deploy this project first you have to prepare the dataset needed for emotions detctions.
+#### Clone this Git Repository:
 
-Download "fer2013.csv" from this link:
-https://www.kaggle.com/datasets/deadskull7/fer2013
-
-then run 
 ```bash
-python dataset_prepare.py
+git clone https://github.com/aroproduction/emotion_powered_chatbot
 ```
 
-A folder with all the training and testing images will be generated.
+#### Change the working directory to the cloned directory:
+```bash
+cd emotion_powered_chatbot
+```
 
-the pre-trained model with around 63.41% emotion detection accuracy is given as "pr_model.h5".
+The customly-trained model trained on "fer2013.csv" dataset (https://www.kaggle.com/datasets/deadskull7/fer2013) with around 63.41% emotion detection accuracy is given as "pr_model.h5".
 
-Run 
+#### Run 
 ```bash
 pip install -r requirements.txt
 ```
 to install the dependencies.
 
-Finally to deploy the project:
+#### Finally to run the main page:
 ```bash
 streamlit run main.py
 ```
@@ -47,6 +46,21 @@ streamlit run main.py
 
 ## Screenshots
 
+### Home Page
+
+![App Screenshot](https://i.ibb.co/7RSGVbx/Screenshot-25-3-2024-12284-localhost.jpg)
+
+### Detection Page
+
 ![App Screenshot](https://i.ibb.co/SRnKCR6/main-Streamlit-Brave-2-4-2024-1-44-43-PM.png)
 
+### Live Chat based on detection
+
+![App Screenshot](https://i.ibb.co/48bYkx5/Screenshot-25-3-2024-122019-localhost.jpg)
+
+
+
+## License
+
+Licensed @ Byte Busters(2024)
 

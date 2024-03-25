@@ -1,25 +1,20 @@
 import numpy as np
 import cv2
 import streamlit as st
-# from tensorflow import keras
-# from keras.models import model_from_json
-# from keras.preprocessing.image import img_to_array
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import cv2
 from tensorflow.keras.models import Sequential 
 from tensorflow.keras.layers import Dense, Dropout, Flatten 
 from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import requests
 from localStoragePy import localStoragePy
 
 localStorage = localStoragePy('my_app', 'json')
 
-model = "@cf/meta/llama-2-7b-chat-int8"
+model = "@cf/meta/llama-2-7b-chat-fp16"
 account_id = "22d5746a5309e439f88bd2acc163466c"
-api_token = "uEknbTWt4BvUEqKQMgAqr9RFoU3Ejnzlot6n2rIV"
+api_token = "NNnsu-n_5wXh_bNTG-fbtKGeiIandMLIFSBRpLEI"
 
 # max_indexes = []
 emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
@@ -64,14 +59,9 @@ class VideoTransformer(VideoTransformerBase):
         # prevents openCL usage and unnecessary logging messages
         cv2.ocl.setUseOpenCL(False)
 
-        # dictionary which assigns each label an emotion (alphabetical order)
-        # global emotion_dict
-        # emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-
         # Find haar cascade to draw bounding box around face
         frame = frame.to_ndarray(format="bgr24")
-        # if not ret:
-        #     break
+
         facecasc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
@@ -146,24 +136,26 @@ elif choice == "Webcam Face Detection":
     user_input = st.text_input("Ask something:")
     if st.button('Send'):
         if user_input != '':
-            pass
             # Get a value from local storage
             value = localStorage.getItem('key')
             # print(value)
             # st.write("Max_index:", value, emotion_dict)
-            response = requests.post(
-                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}",
-                headers={"Authorization": f"Bearer {api_token}"},
-                json={"messages": [
-                    {"role": "system", "content": f"You are a emotion powered chatbot. Your responses are influenced by the user emotions. Currently the user is  {emotion_dict[int(value)]}!"},
-                    {"role": "user", "content": user_input}
-                ]}
-            )
+            if value:
+                response = requests.post(
+                    f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}",
+                    headers={"Authorization": f"Bearer {api_token}"},
+                    json={"messages": [
+                        {"role": "system", "content": f"You are a emotion powered chatbot. Your responses are influenced by the user emotions. Currently the user is  {emotion_dict[int(value)]}!"},
+                        {"role": "user", "content": user_input}
+                    ]}
+                )
 
-            inference = response.json()
-            st.markdown(inference["result"]["response"])
+                inference = response.json()
+                st.markdown(inference["result"]["response"])
+            else:
+                st.write("Please turn on the video device and wait for the model to detect your face emotion!")
         else:
-            st.chat_input('Please enter a question.')
+            st.write('Please enter a question.')
 
 
 elif choice == "About":

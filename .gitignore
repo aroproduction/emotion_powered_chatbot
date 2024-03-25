@@ -8,3 +8,4 @@ venv
 gender_deploy.prototxt
 gender_net.prototxt
 gender.py
+cf_test.py
