@@ -1,5 +1,4 @@
 numpy
-opencv-python
 streamlit
 streamlit_webrtc
 tensorflow
