@@ -6,6 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten 
 from tensorflow.keras.layers import Conv2D
 from keras.optimizers.legacy import Adam
+# from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
@@ -99,7 +100,7 @@ if mode == "train":
             epochs=num_epoch,
             validation_data=validation_generator,
             validation_steps=num_val // batch_size)
-    plot_model_history(model_info)
+    #plot_model_history(model_info)
     model.save_weights('model.h5')
 
 # emotions will be displayed on your face from the webcam feed
